@@ -9,6 +9,6 @@ Can perform the following actions
 
 To try it out,
 
-- Clone REPO
+- clone REPO
 - cd roulette
 - node index.js
