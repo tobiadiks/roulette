@@ -33,7 +33,7 @@ const getBalance = async () => {
         const connection = new web3.Connection(web3.clusterApiUrl('devnet'), 'confirmed')
         const balance = await connection.getBalance(from.publicKey)
         console.log('\n \n \n Your wallet balance is:', balance / web3.LAMPORTS_PER_SOL, 'SOL')
-        return balance
+        return balance / web3.LAMPORTS_PER_SOL
     } catch (err) {
         console.warn(err)
     }
@@ -155,22 +155,20 @@ function ask() {
 function actions() {
     inquirer.prompt(questions).then((answer) => {
 
-        if (answer.actions == 'address') {
-            console.log(from.publicKey.toBase58())
-            again()
-        }
+            if (answer.actions == 'address') {
+                console.log(from.publicKey.toBase58())
+                again()
+            }
 
-        if (answer.actions == 'airdrop') {
-            airDrop()
-            again()
-        }
-        if (answer.actions == 'balance') {
-            getBalance()
-            again()
-        }
-        if (answer.actions == 'play') {
-            let balance = getBalance()
-            if (balance <= 0) {
+            if (answer.actions == 'airdrop') {
+                airDrop()
+                again()
+            }
+            if (answer.actions == 'balance') {
+                getBalance()
+                again()
+            }
+            if (answer.actions == 'play') {
                 inquirer.prompt(number).then((number) => {
                     let generated = randomGenerator()
                     if (number.number == generated) {
@@ -187,14 +185,11 @@ function actions() {
                         again()
                     }
                 })
-            } else {
-                console.log("Insufficient Balance")
-                again()
             }
 
         }
 
-    })
+    )
 
 
 }
