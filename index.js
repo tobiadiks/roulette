@@ -33,6 +33,7 @@ const getBalance = async () => {
         const connection = new web3.Connection(web3.clusterApiUrl('devnet'), 'confirmed')
         const balance = await connection.getBalance(from.publicKey)
         console.log('\n \n \n Your wallet balance is:', balance / web3.LAMPORTS_PER_SOL, 'SOL')
+        return balance
     } catch (err) {
         console.warn(err)
     }
@@ -164,26 +165,33 @@ function actions() {
             again()
         }
         if (answer.actions == 'balance') {
-            getBalance(from.publicKey.toBase58())
+            getBalance()
             again()
         }
         if (answer.actions == 'play') {
-            inquirer.prompt(number).then((number) => {
-                let generated = randomGenerator()
-                if (number.number == generated) {
-                    console.log('Actual number is', generated)
-                    console.log('But you guessed ', number.number)
-                    console.log('You won 1SOL check balance')
-                    airDrop()
-                    again()
-                } else {
-                    console.log('Actual number is', generated)
-                    console.log('But you guessed ', number.number)
-                    console.log('You loosed 0.1SOL check balance')
-                    transferSOL(to, 0.1)
-                    again()
-                }
-            })
+            let balance = getBalance()
+            if (balance <= 0) {
+                inquirer.prompt(number).then((number) => {
+                    let generated = randomGenerator()
+                    if (number.number == generated) {
+                        console.log('Actual number is', generated)
+                        console.log('But you guessed ', number.number)
+                        console.log('You won 1SOL check balance')
+                        airDrop()
+                        again()
+                    } else {
+                        console.log('Actual number is', generated)
+                        console.log('But you guessed ', number.number)
+                        console.log('You loosed 0.1SOL check balance')
+                        transferSOL(to, 0.1)
+                        again()
+                    }
+                })
+            } else {
+                console.log("Insufficient Balance")
+                again()
+            }
+
         }
 
     })
